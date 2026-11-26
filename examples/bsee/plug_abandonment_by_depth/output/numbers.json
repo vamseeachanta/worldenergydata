@@ -1,0 +1,2345 @@
+{
+  "as_of": "2026-11-23",
+  "headlines": [
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "wells",
+      "value": 32040
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "PA",
+      "value": 27069
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "TA",
+      "value": 2360
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "COM",
+      "value": 2359
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "Other",
+      "value": 252
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "PA_pct",
+      "value": 84.48501872659176
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "TA_pct",
+      "value": 7.365792759051186
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "COM_pct",
+      "value": 7.3626716604244695
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "Other_pct",
+      "value": 0.7865168539325843
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "wells",
+      "value": 3000
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "PA",
+      "value": 2165
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "TA",
+      "value": 415
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "COM",
+      "value": 408
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "Other",
+      "value": 12
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "PA_pct",
+      "value": 72.16666666666667
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "TA_pct",
+      "value": 13.833333333333334
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "COM_pct",
+      "value": 13.6
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "Other_pct",
+      "value": 0.4
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "wells",
+      "value": 1511
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "PA",
+      "value": 948
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "TA",
+      "value": 79
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "COM",
+      "value": 443
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "Other",
+      "value": 41
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "PA_pct",
+      "value": 62.73990734612839
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "TA_pct",
+      "value": 5.228325612177366
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "COM_pct",
+      "value": 29.318332230311054
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "Other_pct",
+      "value": 2.71343481138319
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "wells",
+      "value": 899
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "PA",
+      "value": 441
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "TA",
+      "value": 42
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "COM",
+      "value": 367
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "Other",
+      "value": 49
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "PA_pct",
+      "value": 49.05450500556174
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "TA_pct",
+      "value": 4.671857619577308
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "COM_pct",
+      "value": 40.82313681868743
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "Other_pct",
+      "value": 5.450500556173526
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "wells",
+      "value": 63
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "PA",
+      "value": 61
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "TA",
+      "value": 0
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "COM",
+      "value": 2
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "Other",
+      "value": 0
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "PA_pct",
+      "value": 96.82539682539682
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "TA_pct",
+      "value": 0.0
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "COM_pct",
+      "value": 3.1746031746031744
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "Other_pct",
+      "value": 0.0
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "wells",
+      "value": 37513
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "PA",
+      "value": 30684
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "TA",
+      "value": 2896
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "COM",
+      "value": 3579
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "Other",
+      "value": 354
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "PA_pct",
+      "value": 81.79564417668541
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "TA_pct",
+      "value": 7.719990403326847
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "COM_pct",
+      "value": 9.540692559912564
+    },
+    {
+      "table": "status_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "Other_pct",
+      "value": 0.9436728600751739
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "ta_count",
+      "value": 2360
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "q25_years",
+      "value": 4.936344969199179
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "median_years",
+      "value": 13.28268309377139
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "q75_years",
+      "value": 17.78781656399726
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "ta_ge_10_years",
+      "value": 1567
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "Under 100 m"
+      },
+      "field": "ta_since_2023",
+      "value": 506
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "ta_count",
+      "value": 415
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "q25_years",
+      "value": 3.2073921971252566
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "median_years",
+      "value": 12.02464065708419
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "q75_years",
+      "value": 19.006160164271048
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "ta_ge_10_years",
+      "value": 244
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m"
+      },
+      "field": "ta_since_2023",
+      "value": 113
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "ta_count",
+      "value": 79
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "q25_years",
+      "value": 1.9630390143737166
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "median_years",
+      "value": 5.377138945927447
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "q75_years",
+      "value": 14.544832306639288
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "ta_ge_10_years",
+      "value": 30
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m"
+      },
+      "field": "ta_since_2023",
+      "value": 34
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "ta_count",
+      "value": 42
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "q25_years",
+      "value": 0.7898699520876111
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "median_years",
+      "value": 2.491444216290212
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "q75_years",
+      "value": 6.9575633127994525
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "ta_ge_10_years",
+      "value": 7
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper"
+      },
+      "field": "ta_since_2023",
+      "value": 29
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "ta_count",
+      "value": 0
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "q25_years",
+      "value": null
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "median_years",
+      "value": null
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "q75_years",
+      "value": null
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "ta_ge_10_years",
+      "value": 0
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "No depth"
+      },
+      "field": "ta_since_2023",
+      "value": 0
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "ta_count",
+      "value": 2896
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "q25_years",
+      "value": 4.155373032169747
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "median_years",
+      "value": 13.06365503080082
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "q75_years",
+      "value": 17.811772758384667
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "ta_ge_10_years",
+      "value": 1848
+    },
+    {
+      "table": "ta_by_band.csv",
+      "filter": {
+        "band": "All depths"
+      },
+      "field": "ta_since_2023",
+      "value": 682
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2005
+      },
+      "field": "pa_wells",
+      "value": 379
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2006
+      },
+      "field": "pa_wells",
+      "value": 430
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2007
+      },
+      "field": "pa_wells",
+      "value": 710
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2008
+      },
+      "field": "pa_wells",
+      "value": 599
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2009
+      },
+      "field": "pa_wells",
+      "value": 797
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2010
+      },
+      "field": "pa_wells",
+      "value": 875
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2011
+      },
+      "field": "pa_wells",
+      "value": 882
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2012
+      },
+      "field": "pa_wells",
+      "value": 697
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2013
+      },
+      "field": "pa_wells",
+      "value": 515
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2014
+      },
+      "field": "pa_wells",
+      "value": 527
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2015
+      },
+      "field": "pa_wells",
+      "value": 363
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2016
+      },
+      "field": "pa_wells",
+      "value": 567
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2017
+      },
+      "field": "pa_wells",
+      "value": 335
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2018
+      },
+      "field": "pa_wells",
+      "value": 303
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2019
+      },
+      "field": "pa_wells",
+      "value": 236
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2020
+      },
+      "field": "pa_wells",
+      "value": 87
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2021
+      },
+      "field": "pa_wells",
+      "value": 231
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2022
+      },
+      "field": "pa_wells",
+      "value": 320
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2023
+      },
+      "field": "pa_wells",
+      "value": 552
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2024
+      },
+      "field": "pa_wells",
+      "value": 256
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2025
+      },
+      "field": "pa_wells",
+      "value": 496
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2025
+      },
+      "field": "pa_2021_2025",
+      "value": 1855
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2025
+      },
+      "field": "pa_2016_2025",
+      "value": 3383
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2025
+      },
+      "field": "pa_per_year_2021_2025",
+      "value": 371.0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2025
+      },
+      "field": "pa_per_year_2016_2025",
+      "value": 338.3
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2021_2025",
+      "value": 6.361185983827493
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2016_2025",
+      "value": 6.976056754360036
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2025
+      },
+      "field": "ta_plus_com",
+      "value": 4719
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2021_2025",
+      "value": 12.719676549865229
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "Under 100 m",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2016_2025",
+      "value": 13.949157552468224
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2005
+      },
+      "field": "pa_wells",
+      "value": 32
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2006
+      },
+      "field": "pa_wells",
+      "value": 27
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2007
+      },
+      "field": "pa_wells",
+      "value": 34
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2008
+      },
+      "field": "pa_wells",
+      "value": 32
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2009
+      },
+      "field": "pa_wells",
+      "value": 45
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2010
+      },
+      "field": "pa_wells",
+      "value": 77
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2011
+      },
+      "field": "pa_wells",
+      "value": 93
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2012
+      },
+      "field": "pa_wells",
+      "value": 68
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2013
+      },
+      "field": "pa_wells",
+      "value": 20
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2014
+      },
+      "field": "pa_wells",
+      "value": 35
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2015
+      },
+      "field": "pa_wells",
+      "value": 47
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2016
+      },
+      "field": "pa_wells",
+      "value": 40
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2017
+      },
+      "field": "pa_wells",
+      "value": 30
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2018
+      },
+      "field": "pa_wells",
+      "value": 58
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2019
+      },
+      "field": "pa_wells",
+      "value": 30
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2020
+      },
+      "field": "pa_wells",
+      "value": 75
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2021
+      },
+      "field": "pa_wells",
+      "value": 10
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2022
+      },
+      "field": "pa_wells",
+      "value": 29
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2023
+      },
+      "field": "pa_wells",
+      "value": 27
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2024
+      },
+      "field": "pa_wells",
+      "value": 10
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2025
+      },
+      "field": "pa_wells",
+      "value": 45
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2025
+      },
+      "field": "pa_2021_2025",
+      "value": 121
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2025
+      },
+      "field": "pa_2016_2025",
+      "value": 354
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2025
+      },
+      "field": "pa_per_year_2021_2025",
+      "value": 24.2
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2025
+      },
+      "field": "pa_per_year_2016_2025",
+      "value": 35.4
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2021_2025",
+      "value": 17.14876033057851
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2016_2025",
+      "value": 11.72316384180791
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2025
+      },
+      "field": "ta_plus_com",
+      "value": 823
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2021_2025",
+      "value": 34.00826446280992
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "100 to under 500 m",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2016_2025",
+      "value": 23.24858757062147
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2005
+      },
+      "field": "pa_wells",
+      "value": 18
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2006
+      },
+      "field": "pa_wells",
+      "value": 16
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2007
+      },
+      "field": "pa_wells",
+      "value": 18
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2008
+      },
+      "field": "pa_wells",
+      "value": 15
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2009
+      },
+      "field": "pa_wells",
+      "value": 20
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2010
+      },
+      "field": "pa_wells",
+      "value": 12
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2011
+      },
+      "field": "pa_wells",
+      "value": 16
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2012
+      },
+      "field": "pa_wells",
+      "value": 17
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2013
+      },
+      "field": "pa_wells",
+      "value": 27
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2014
+      },
+      "field": "pa_wells",
+      "value": 29
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2015
+      },
+      "field": "pa_wells",
+      "value": 31
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2016
+      },
+      "field": "pa_wells",
+      "value": 48
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2017
+      },
+      "field": "pa_wells",
+      "value": 34
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2018
+      },
+      "field": "pa_wells",
+      "value": 23
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2019
+      },
+      "field": "pa_wells",
+      "value": 20
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2020
+      },
+      "field": "pa_wells",
+      "value": 24
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2021
+      },
+      "field": "pa_wells",
+      "value": 39
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2022
+      },
+      "field": "pa_wells",
+      "value": 44
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2023
+      },
+      "field": "pa_wells",
+      "value": 34
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2024
+      },
+      "field": "pa_wells",
+      "value": 32
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2025
+      },
+      "field": "pa_wells",
+      "value": 24
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2025
+      },
+      "field": "pa_2021_2025",
+      "value": 173
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2025
+      },
+      "field": "pa_2016_2025",
+      "value": 322
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2025
+      },
+      "field": "pa_per_year_2021_2025",
+      "value": 34.6
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2025
+      },
+      "field": "pa_per_year_2016_2025",
+      "value": 32.2
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2021_2025",
+      "value": 2.283236994219653
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2016_2025",
+      "value": 2.453416149068323
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2025
+      },
+      "field": "ta_plus_com",
+      "value": 522
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2021_2025",
+      "value": 15.086705202312139
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "500 to under 1,500 m",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2016_2025",
+      "value": 16.211180124223603
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2005
+      },
+      "field": "pa_wells",
+      "value": 7
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2006
+      },
+      "field": "pa_wells",
+      "value": 6
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2007
+      },
+      "field": "pa_wells",
+      "value": 6
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2008
+      },
+      "field": "pa_wells",
+      "value": 15
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2009
+      },
+      "field": "pa_wells",
+      "value": 20
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2010
+      },
+      "field": "pa_wells",
+      "value": 11
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2011
+      },
+      "field": "pa_wells",
+      "value": 9
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2012
+      },
+      "field": "pa_wells",
+      "value": 19
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2013
+      },
+      "field": "pa_wells",
+      "value": 22
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2014
+      },
+      "field": "pa_wells",
+      "value": 36
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2015
+      },
+      "field": "pa_wells",
+      "value": 33
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2016
+      },
+      "field": "pa_wells",
+      "value": 27
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2017
+      },
+      "field": "pa_wells",
+      "value": 19
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2018
+      },
+      "field": "pa_wells",
+      "value": 12
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2019
+      },
+      "field": "pa_wells",
+      "value": 18
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2020
+      },
+      "field": "pa_wells",
+      "value": 27
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2021
+      },
+      "field": "pa_wells",
+      "value": 20
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2022
+      },
+      "field": "pa_wells",
+      "value": 6
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2023
+      },
+      "field": "pa_wells",
+      "value": 13
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2024
+      },
+      "field": "pa_wells",
+      "value": 13
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2025
+      },
+      "field": "pa_wells",
+      "value": 10
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2025
+      },
+      "field": "pa_2021_2025",
+      "value": 62
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2025
+      },
+      "field": "pa_2016_2025",
+      "value": 165
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2025
+      },
+      "field": "pa_per_year_2021_2025",
+      "value": 12.4
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2025
+      },
+      "field": "pa_per_year_2016_2025",
+      "value": 16.5
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2021_2025",
+      "value": 3.3870967741935485
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2016_2025",
+      "value": 2.5454545454545454
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2025
+      },
+      "field": "ta_plus_com",
+      "value": 409
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2021_2025",
+      "value": 32.983870967741936
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "1,500 m and deeper",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2016_2025",
+      "value": 24.78787878787879
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2005
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2006
+      },
+      "field": "pa_wells",
+      "value": 1
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2007
+      },
+      "field": "pa_wells",
+      "value": 3
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2008
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2009
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2010
+      },
+      "field": "pa_wells",
+      "value": 1
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2011
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2012
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2013
+      },
+      "field": "pa_wells",
+      "value": 1
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2014
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2015
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2016
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2017
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2018
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2019
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2020
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2021
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2022
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2023
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2024
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2025
+      },
+      "field": "pa_wells",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2025
+      },
+      "field": "pa_2021_2025",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2025
+      },
+      "field": "pa_2016_2025",
+      "value": 0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2025
+      },
+      "field": "pa_per_year_2021_2025",
+      "value": 0.0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2025
+      },
+      "field": "pa_per_year_2016_2025",
+      "value": 0.0
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2021_2025",
+      "value": null
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2016_2025",
+      "value": null
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2025
+      },
+      "field": "ta_plus_com",
+      "value": 2
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2021_2025",
+      "value": null
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "No depth",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2016_2025",
+      "value": null
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2005
+      },
+      "field": "pa_wells",
+      "value": 436
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2006
+      },
+      "field": "pa_wells",
+      "value": 480
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2007
+      },
+      "field": "pa_wells",
+      "value": 771
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2008
+      },
+      "field": "pa_wells",
+      "value": 661
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2009
+      },
+      "field": "pa_wells",
+      "value": 882
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2010
+      },
+      "field": "pa_wells",
+      "value": 976
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2011
+      },
+      "field": "pa_wells",
+      "value": 1000
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2012
+      },
+      "field": "pa_wells",
+      "value": 801
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2013
+      },
+      "field": "pa_wells",
+      "value": 585
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2014
+      },
+      "field": "pa_wells",
+      "value": 627
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2015
+      },
+      "field": "pa_wells",
+      "value": 474
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2016
+      },
+      "field": "pa_wells",
+      "value": 682
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2017
+      },
+      "field": "pa_wells",
+      "value": 418
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2018
+      },
+      "field": "pa_wells",
+      "value": 396
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2019
+      },
+      "field": "pa_wells",
+      "value": 304
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2020
+      },
+      "field": "pa_wells",
+      "value": 213
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2021
+      },
+      "field": "pa_wells",
+      "value": 300
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2022
+      },
+      "field": "pa_wells",
+      "value": 399
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2023
+      },
+      "field": "pa_wells",
+      "value": 626
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2024
+      },
+      "field": "pa_wells",
+      "value": 311
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2025
+      },
+      "field": "pa_wells",
+      "value": 575
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2025
+      },
+      "field": "pa_2021_2025",
+      "value": 2211
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2025
+      },
+      "field": "pa_2016_2025",
+      "value": 4224
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2025
+      },
+      "field": "pa_per_year_2021_2025",
+      "value": 442.2
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2025
+      },
+      "field": "pa_per_year_2016_2025",
+      "value": 422.4
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2021_2025",
+      "value": 6.5490728177295345
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2025
+      },
+      "field": "ta_backlog_years_2016_2025",
+      "value": 6.856060606060606
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2025
+      },
+      "field": "ta_plus_com",
+      "value": 6475
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2021_2025",
+      "value": 14.642695612844866
+    },
+    {
+      "table": "pa_pace_by_band.csv",
+      "filter": {
+        "band": "All depths",
+        "year": 2025
+      },
+      "field": "ta_plus_com_years_2016_2025",
+      "value": 15.32907196969697
+    }
+  ]
+}
