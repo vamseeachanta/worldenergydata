@@ -130,6 +130,22 @@ A non-scheduler source may be marked `fresh` only when it has an accepted source
 
 Use `reference_data` only for static reference assets where periodic refresh is not expected. Use `blocked` when a source has a known issue, external portal requirement, endpoint failure, or manual step that prevents normal periodic refresh. Blocked rows must carry `blocker_issue` when the blocker is tracked.
 
+## International Chain Reconciliation
+
+Completed reference-chain implementation is separate from materialized data and
+accepted source vintage. The dated
+[international reconciliation](international-source-reconciliation.md) compares
+country capabilities, issue states, scheduler configuration and storage evidence.
+Its register is `data/international-source-reconciliation.json`; the offline
+comparison is `scripts/audit/reconcile_international_sources.py`.
+
+Directory or manifest presence alone does not establish freshness. Historical
+external-cache observations stay historical until explicitly re-observed. A
+closed endpoint repair must not remain an active blocker, and a closed chain
+issue must not be treated as proof that a scheduled refresh ran. External source
+requirements without an open implementation issue may use `blocker_issue: none`
+with a documented `refresh_blocker_reason`.
+
 ## Acceptance Checklist
 
 A source summary is acceptable when:
