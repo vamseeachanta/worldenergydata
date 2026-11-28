@@ -1,14 +1,14 @@
 {
   "criteria_revision": 3,
   "software": {
-    "python": "3.12.13",
-    "pandas": "2.3.3",
-    "numpy": "2.5.4",
+    "python": "3.11.15",
+    "pandas": "3.1.1",
+    "numpy": "2.4.6",
     "matplotlib": "3.11.2",
     "pyyaml": "6.0.3"
   },
   "code_and_basis_sha256": {
-    "examples/bsee/interventions_by_depth/build_article.py": "587d60741d2367dcc242ed84e5ccf5da49041477bd7090371842fc1c13871bd2",
+    "examples/bsee/interventions_by_depth/build_article.py": "6527fe79ac63801341d1393f79490c4c6206c7225f341341310adb79cfdfcd61",
     "examples/bsee/interventions_by_depth/build_cost_basis.py": "6ee8f3fcb50433b51f7bbb96e7eb4faf3e6617cfcbff0da6de9cb7131c481071",
     "examples/bsee/interventions_by_depth/cost_basis.yml": "d788f355c4bc43db462ebe1e689c4ad863464960c0aad3268f22865f05d0e630",
     "examples/bsee/interventions_by_depth/count_interventions.py": "2139aede8544f5f41a2b2ef019efbddef454b56131fe00abfc48e49d236f23f5",
@@ -16,15 +16,15 @@
     "examples/bsee/interventions_by_depth/estimate_costs.py": "1fabea436175506bf84debd71d5667cec889970adf3bd93ce1d44f27eecfac69",
     "examples/bsee/interventions_by_depth/plot_charts.py": "1313c3b665589e82af77a1eb153f5ea8aef2ce0ee2bf0685aa20ea839fe2c20b",
     "examples/bsee/interventions_by_depth/plot_life_cycle.py": "42724b80e607bb9b2856930385a3df4e6be297ad4f977474ab73acf49a8837e2",
-    "examples/bsee/interventions_by_depth/README.md": "b7fd3788ed3280d689caf5db06ecde68a9a55d4cd75c89d61c46bfaaa1784a7c",
+    "examples/bsee/interventions_by_depth/README.md": "ea6b0d322e68d3249019aa8e5dd5ef8afd1e64cf39bf96f0fa5ac1d62ef932e0",
     "examples/bsee/interventions_by_depth/report_text.py": "98358e0f48b6a39bfd2b54e5f253c872f76aa52b23c4d2cbe843b70335e2cc54",
     "examples/bsee/interventions_by_depth/requirements.txt": "8f149ddae6071cc2877d558e304a4261933def6c82f3062142da3603e1e673d6",
     "examples/bsee/interventions_by_depth/verify_cost_sources.py": "a213275d3601830fd295bfa582cf7cc51b1905ec46d2bd87fe12cb7a31b26436",
-    "examples/bsee/interventions_by_depth/verify_outputs.py": "eb897451a23acc478bbd5f15493e9c685d468c6cf8177ac04e0fab91f3196c78",
+    "examples/bsee/interventions_by_depth/verify_outputs.py": "fda0a35923fd0fafaeaa5662dd71fe200f188c6539718231b5ed95f0eddd7802",
     "examples/bsee/interventions_by_depth/well_life_cycle.py": "6a28c449869d51cbc33de62068d27f8ee410ac2120930c51dece91707ce97d98",
-    "examples/bsee/interventions_by_depth/write_results_note.py": "bc9ae6e6178ea98dfd164a622ae1307796096e70c830e4a94e9febe99f6824f9",
+    "examples/bsee/interventions_by_depth/write_results_note.py": "329ebdb95d740c930af85235ea7bae5e96170af41c74cd0f922f89e07db87ba7",
     "tests/unit/bsee/test_interventions_by_depth.py": "189e9e2e6637dc3f6e900949d16fff4d4c46d005c00de373826563f4ced5e750",
-    "tests/unit/bsee/test_interventions_report.py": "2baf33b7fdd58aa41b563be6c811cda7a48875e75ddb595f5dbaef437c3edeaa",
+    "tests/unit/bsee/test_interventions_report.py": "76dbfce21a2c13abebda6bdf4025346f521a11d2c8ba970f62607d2a696df16e",
     "tests/unit/bsee/test_well_life_cycle.py": "a1da2a1eb8cd153388f2eb26c916e461db01abb75c89043fcf0b01e13deb08cd"
   },
   "checks": [
