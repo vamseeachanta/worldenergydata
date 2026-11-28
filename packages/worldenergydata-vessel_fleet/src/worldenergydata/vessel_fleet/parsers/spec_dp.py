@@ -26,9 +26,12 @@ def parse_spec_dp(text: str) -> dict[str, int]:
         if match:
             tokens.update(_TOKEN.findall(match.group(1)))
 
+    if not tokens.issubset(_SUPPORTED):
+        logger.warning("Unsupported DP System token; DP_CLASS omitted")
+        return {}
     if len(tokens) > 1:
         logger.warning("Conflicting DP System classes; DP_CLASS omitted")
         return {}
-    if not tokens or not tokens.issubset(_SUPPORTED):
+    if not tokens:
         return {}
     return {"DP_CLASS": int(next(iter(tokens)))}
