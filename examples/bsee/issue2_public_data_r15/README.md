@@ -1,6 +1,8 @@
 # Part 2 · Permitting and drilling · r15
 
-The November BSEE refresh gives **2,895 Gulf new-well permits** for 2005 through partial-year 2026, including **47 for 2026**, and **2,913 qualifying well starts** in the complete spud years 2005 to 2025. The permit counts, rig and depth shares, and duration statistics match r12. Comparison by API well number found zero wells added, removed or changed in either map file, including coordinates and depth bands. Seven input and exclusion counts changed. The comparison gives the r12 value, r15 value and signed difference for each aggregate and article reading. Share differences are in percentage points. Blank values denote unavailable statistics. [Comparison CSV](data/r12-vs-r15.csv)
+The November BSEE refresh gives **2,895 Gulf new-well permits** for 2005 through partial-year 2026, including **47 for 2026**, and **2,913 qualifying well starts** in the complete spud years 2005 to 2025. The permit counts, rig and depth shares, and duration statistics match r12. Seven APM and borehole input and exclusion counts changed. For the APD input audit, r12 recorded only the 10 first permits without a readable requested spud date. The APD input total and other exclusion counts have no r12 comparator.
+
+The comparison gives the r12 value, r15 value and signed difference for each aggregate and article reading. Share differences are in percentage points. Blank values denote unavailable statistics. The comparison excludes source receipts, archive members, input columns, the code mapping and individual well records. A separate comparison by API well number found zero wells added, removed or changed in either map file, including coordinates and depth bands. [Comparison CSV](data/r12-vs-r15.csv)
 
 ## Source dates
 
@@ -36,6 +38,8 @@ done
 
 The pinned repository input `data/wti-monthly.csv` requires an LF checkout, including on Windows. The offline tests run the producer with small synthetic ZIPs, recompute the published comparison from both revisions, and compare both maps by well number. Setting `BSEE_R15_DATA_DIR` also tests regeneration of every delivered CSV byte for byte from the pinned BSEE files.
 
+The PR reporting tests collect three offline checks from this example. They recompute the comparison CSV, check the 22 named headlines against r12 and their published values, and verify the seven signed changes in the APM and borehole counts. The command below runs the full example suite.
+
 ```sh
 article=examples/bsee/issue2_public_data_r15
 uv run --no-project --python 3.11 --with pandas==2.3.3 --with matplotlib==3.10.6 \
@@ -45,3 +49,5 @@ uv run --no-project --python 3.11 --with pandas==2.3.3 --with matplotlib==3.10.6
 ```
 
 The producer verifies the four source pins before deriving the 21 r12 table names, the record reconciliation and the comparison. It reads local inputs only. A digest mismatch names the file, expected SHA-256 and actual SHA-256, and leaves the existing CSVs in place.
+
+If the output directory contains an unexpected CSV, the producer lists its name and stops before replacing any tables. Move the listed files out of the output directory before rerunning.

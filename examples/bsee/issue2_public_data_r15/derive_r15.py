@@ -150,12 +150,16 @@ def build_tables(data_dir, sources):
 
 def derive(data_dir, out=ROOT / "data"):
     baseline = r12.ROOT / "data"
+    expected = {p.stem for p in baseline.glob("*.csv")} | {"record-counts"}
+    expected_files = {f"{name}.csv" for name in expected} | {"r12-vs-r15.csv"}
+    unexpected = sorted(p.name for p in out.glob("*.csv") if p.name not in expected_files)
+    if unexpected:
+        raise ValueError(f"Unexpected CSVs in output directory: {', '.join(unexpected)}")
     # Finish every calculation and comparison before replacing any article CSV.
     with TemporaryDirectory(prefix=".derive-", dir=out.parent) as scratch:
         staged = Path(scratch)
         sources = stage_inputs(data_dir, staged)
         tables = build_tables(staged, sources)
-        expected = {p.stem for p in baseline.glob("*.csv")} | {"record-counts"}
         if set(tables) != expected:
             raise ValueError(f"Table inventory differs from r12: {sorted(set(tables) ^ expected)}")
         # Keep inputs (including wti-monthly.csv) out of the output inventory.

@@ -1,5 +1,6 @@
 """Offline checks on the producer and its checked-in article tables."""
 
+import hashlib
 import re
 import sys
 from pathlib import Path
@@ -131,8 +132,13 @@ def test_fresh_derivation_matches_every_delivered_csv(tmp_path):
     directory = os.environ.get("BSEE_R15_DATA_DIR")
     if not directory:
         pytest.skip("set BSEE_R15_DATA_DIR to the directory holding the pinned BSEE files")
+    archives = Path(directory)
+    wti = derive.derive_r12.WTI
+    for receipt in read("sources").itertuples(index=False):
+        source = wti if receipt.file == wti.name else archives / receipt.file
+        assert hashlib.sha256(source.read_bytes()).hexdigest() == receipt.sha256, receipt.file
     regenerated = tmp_path / "data"
-    derive.derive(Path(directory), regenerated)
+    derive.derive(archives, regenerated)
     assert {p.name for p in regenerated.iterdir()} == {p.name for p in DATA.glob("*.csv")}
     for path in regenerated.iterdir():
         assert path.read_bytes() == (DATA / path.name).read_bytes(), path.name
