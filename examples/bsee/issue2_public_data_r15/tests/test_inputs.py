@@ -90,9 +90,24 @@ def test_cli_names_missing_input(cli_inputs):
     assert not (article / "data").exists()
 
 
+def test_cli_preserves_prior_output_when_an_unlisted_csv_exists(cli_inputs):
+    article, archives, _ = cli_inputs
+    output = article / "data"
+    output.mkdir()
+    prior = {"table1.csv": b"prior table", "retired.csv": b"prior data"}
+    for name, content in prior.items():
+        (output / name).write_bytes(content)
+
+    result = run_cli(article, archives)
+
+    assert result.returncode != 0
+    assert "retired.csv" in result.stderr
+    assert {p.name: p.read_bytes() for p in output.iterdir()} == prior
+
+
 @pytest.mark.parametrize("use_links", [False, True], ids=["files", "symlinks"])
 def test_synthetic_cli_partitions_all_three_archives(cli_inputs, use_links):
-    article, archives, _ = cli_inputs
+    article, archives, paths = cli_inputs
     if use_links:
         for path in sorted(archives.glob("*.zip")):
             target = path.rename(archives.parent / path.name)
@@ -106,6 +121,9 @@ def test_synthetic_cli_partitions_all_three_archives(cli_inputs, use_links):
     result = run_cli(article, archives)
 
     assert result.returncode == 0, result.stderr
+    with (article / "data" / "sources.csv").open(encoding="utf-8", newline="") as stream:
+        digests = {row["file"]: row["sha256"] for row in csv.DictReader(stream)}
+    assert digests == {name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in paths.items()}
     audit = pd.read_csv(article / "data" / "record-counts.csv")
     totals = audit.groupby(["source", "disposition"]).records.sum()
     assert totals.unstack()[["read", "kept", "excluded"]].to_dict("index") == {

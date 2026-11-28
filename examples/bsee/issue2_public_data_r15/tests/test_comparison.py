@@ -1,16 +1,14 @@
 """Compare the displayed r12 groups even when fresh data reorders or adds rows."""
 
-import sys
-from shutil import copytree
 from pathlib import Path
+from shutil import copytree
 
 import pandas as pd
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-from compare_r15 import compare_tables, majority_start
+from examples.bsee.issue2_public_data_r15.compare_r15 import compare_tables, majority_start
 
+ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT.parent / "issue2_public_data_r12" / "data"
 DATA = ROOT / "data"
 
