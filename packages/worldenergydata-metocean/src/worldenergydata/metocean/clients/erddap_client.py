@@ -127,6 +127,10 @@ class ERDDAPClient(BaseClient):
 
     # Variable name mappings from ERDDAP to standard attribute names
     VARIABLE_MAPPING: Dict[str, str] = {
+        # Marine Institute IWBNetwork metadata: metres and seconds.
+        # https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph
+        "WaveHeight": "wave_height_m",
+        "Tp": "wave_period_s",
         "sea_surface_wave_significant_height": "wave_height_m",
         "wave_height": "wave_height_m",
         "significant_wave_height": "wave_height_m",

@@ -1,0 +1,61 @@
+{
+  "description": "Small recorded public responses; values are observations or forecasts, not design conditions. See source register for terms and endpoint documentation.",
+  "samples": [
+    {
+      "source": "ndbc_realtime",
+      "file": "ndbc_station_day.txt",
+      "url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+      "fetched_at": "2026-10-22T16:14:57.347632+00:00",
+      "http_status": 200,
+      "raw_sha256": "ead2647539b14337f284c4aa27788e5b261b4e24ebe48f3ed2882c78ecd0fca9",
+      "sha256": "7fd2bc60e2bb0c8c5132a3c547e1db578afc00f219c9107cd93c44b58433bfe2",
+      "transformation": "Retain original two headers and all rows for UTC 2026-10-21.",
+      "kind": "publisher observations",
+      "publisher": "NOAA NDBC",
+      "terms_url": "https://www.weather.gov/disclaimer",
+      "docs_url": "https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf"
+    },
+    {
+      "source": "coops",
+      "file": "coops_station_day.json",
+      "url": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20250101&end_date=20250101&station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=metric&application=DataAPI_Sample&format=json",
+      "fetched_at": "2026-10-22T16:14:57.824102+00:00",
+      "http_status": 200,
+      "raw_sha256": "e81d2d2729054ae959c680fa6ab5f6663a61acd899076950290b290d7b483a82",
+      "sha256": "e81d2d2729054ae959c680fa6ab5f6663a61acd899076950290b290d7b483a82",
+      "transformation": "Retain complete original response for UTC 2025-01-01.",
+      "kind": "publisher observations",
+      "publisher": "NOAA CO-OPS",
+      "terms_url": "https://tidesandcurrents.noaa.gov/disclaimers.html",
+      "docs_url": "https://api.tidesandcurrents.noaa.gov/api/prod/"
+    },
+    {
+      "source": "irish_weather_buoys",
+      "file": "erddap_sample.json",
+      "url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.json?time%2Cstation_id%2CWaveHeight%2CTp&time%3E=2025-12-31T00%3A00%3A00Z&time%3C=2025-12-31T01%3A00%3A00Z",
+      "fetched_at": "2026-10-22T16:18:02.003143+00:00",
+      "http_status": 200,
+      "raw_sha256": "52919ee8f3ba907c13f16267ce922860ff2992ec64fa7abb4249843bef0fecff",
+      "sha256": "52919ee8f3ba907c13f16267ce922860ff2992ec64fa7abb4249843bef0fecff",
+      "transformation": "Retain complete original response.",
+      "kind": "publisher observations",
+      "publisher": "Marine Institute",
+      "terms_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+      "docs_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph"
+    },
+    {
+      "source": "met_norway",
+      "file": "met_sample.json",
+      "url": "https://api.met.no/weatherapi/oceanforecast/2.0/complete?lat=60.10&lon=5",
+      "fetched_at": "2026-10-22T16:14:59.319602+00:00",
+      "http_status": 200,
+      "raw_sha256": "439622c45b4762e6034f3537ec7138913576350209697c34b0e8a84bd9974637",
+      "sha256": "49e7b9bcb4d3e0c6c0b4537458c221967bade8056311b7452cdfa24a0e3b238d",
+      "transformation": "Retain original metadata and first timeseries entry; serialize JSON.",
+      "kind": "publisher forecast",
+      "publisher": "MET Norway",
+      "terms_url": "https://docs.api.met.no/doc/TermsOfService.html",
+      "docs_url": "https://api.met.no/weatherapi/oceanforecast/2.0/documentation"
+    }
+  ]
+}

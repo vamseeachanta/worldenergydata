@@ -18,7 +18,8 @@ Authenticated retrieval and engineering suitability are <strong>NOT_EVALUATED</s
 until credentials, dataset terms, selection and downloaded output are checked.</p>
 <h2>Revision history</h2>
 <table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
-<tr><td>Initial</td><td>2026-10-19</td><td>Current SDK adapters and catalogue checks replace the stale MOTU reference.</td></tr></table>
+<tr><td>Initial</td><td>2026-10-19</td><td>Current SDK adapters and catalogue checks replace the stale MOTU reference.</td></tr>
+<tr><td>2</td><td>2026-10-22</td><td>Require environment-only credentials and document the optional SDK extra.</td></tr></table>
 <h2>Sources and migration</h2>
 <ul>
 <li><a href="https://cds.climate.copernicus.eu/en/how-to-api">CDSAPI setup</a>,
@@ -57,7 +58,12 @@ assert answer["id"] == "MDS"
 print(answer["id"])  # MDS: the expected catalogue identity; no download verdict.
 </code></pre>
 <h2>Download usage</h2>
-<p>Configure credentials through the SDK's documented local configuration or environment.
+<p>Install <code>worldenergydata-metocean[copernicus]</code> for the optional SDKs.
+Configure credentials only through <code>CDSAPI_KEY</code> or both
+<code>COPERNICUSMARINE_SERVICE_USERNAME</code> and <code>COPERNICUSMARINE_SERVICE_PASSWORD</code>.
+The adapters require these environment variables and do not fall back to stored credential files.
+SDK exception details are suppressed; keep SDK debug logging disabled.
+See the <a href="metocean-endpoint-audit.md">endpoint audit</a> for access requirements and credentialed tests.
 Never place tokens or passwords in source, examples or reports. Accept CDS dataset terms
 through its download form first. Copy the current dataset request from that form,
 then pass it as <code>ERA5Client().retrieve(dataset, request, target)</code>.
